@@ -36,6 +36,33 @@ jobs:
         with:
           commit_message: Apply terraform fmt changes
 
+  terraform-scanning:
+    defaults:
+      run:
+          working-directory: './vpc/'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: terraform-linters/setup-tflint@v3
+        name: Setup TFLint
+        with:
+          tflint_version: latest
+
+			- name: Show version
+				run: tflint --version
+
+			- name: Init TFLint
+				run: tflint --init
+				env:
+					# https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+					GITHUB_TOKEN: ${{ github.token }}
+
+			- name: Run TFLint
+				run: tflint -f compact
+
   terraform-tests:
     runs-on: ubuntu-latest
     #if: steps.auto-commit-action.outputs.changes_detected == 'false'
@@ -55,3 +82,8 @@ jobs:
         with:
           test_retry: 1
           test_dir: ./vpc/test
+        env:
+          BACKEND_BUCKET: ${{ vars.BACKEND_BUCKET }}
+          BACKEND_KEY: ${{ vars.BACKEND_KEY }}vpc.tfstate
+          BACKEND_REGION: ${{ vars.BACKEND_REGION }}
+          BACKEND_DYNAMODB_TABLE: ${{ vars.BACKEND_DYNAMODB_TABLE }}
