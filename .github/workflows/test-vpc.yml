@@ -88,3 +88,4 @@ jobs:
           BACKEND_KEY: ${{ vars.BACKEND_KEY }}vpc.tfstate
           BACKEND_REGION: ${{ vars.BACKEND_REGION }}
           BACKEND_DYNAMODB_TABLE: ${{ vars.BACKEND_DYNAMODB_TABLE }}
+          FLOW_LOG_PERMISSION_BOUNDARY: ${{ vars.FLOW_LOG_PERMISSION_BOUNDARY }}
