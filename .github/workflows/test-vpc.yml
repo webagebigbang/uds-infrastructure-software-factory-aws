@@ -79,7 +79,7 @@ jobs:
           role-duration-seconds: 1800
       # terraform fmt, tf validate, tflint, chekov
       - name: Run Common Terraform Tests
-        uses: defenseunicorns/uds-common-workflows/.github/actions/terraform-test@fix-setup-go
+        uses: defenseunicorns/uds-common-workflows/.github/actions/terraform-test@main
         with:
           test_retry: 1
           test_dir: ./vpc/test
