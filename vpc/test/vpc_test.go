@@ -3,7 +3,7 @@ package test_test
 import (
 	"crypto/rand"
 	"fmt"
-  "os"
+	"os"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/aws"
@@ -15,6 +15,7 @@ const (
 	awsRegionVar       = "region"
 	cidrVar            = "cidr"
 	expectedNamePrefix = "terratest-vpc"
+	flowLogBoundaryVar = "vpc_flow_log_permissions_boundary"
 	nameOutput         = "name"
 	nameVar            = "name"
 	testDir            = "../"
@@ -28,9 +29,10 @@ func TestVPCModule(t *testing.T) {
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: testDir,
 		Vars: map[string]interface{}{
-			awsRegionVar: awsRegion,
-			cidrVar:      "10.0.0.0/16",
-			nameVar:      generateVpcName(),
+			awsRegionVar:       awsRegion,
+			cidrVar:            "10.0.0.0/16",
+			flowLogBoundaryVar: os.Getenv("FLOW_LOG_PERMISSION_BOUNDARY"),
+			nameVar:            generateVpcName(),
 		},
 
 		BackendConfig: map[string]interface{}{
