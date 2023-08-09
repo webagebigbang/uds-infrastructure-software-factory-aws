@@ -10,9 +10,9 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.1.1"
 
-  name                  = var.name                  #"oursler-swf"
-  cidr                  = var.cidr                  #"10.0.0.0/16"
-  secondary_cidr_blocks = var.secondary_cidr_blocks #["100.64.0.0/16"]
+  name                  = var.name
+  cidr                  = var.cidr
+  secondary_cidr_blocks = var.secondary_cidr_blocks
   azs                   = local.azs
   public_subnets        = [for k, v in module.vpc.azs : cidrsubnet(module.vpc.vpc_cidr_block, 4, k)]
   private_subnets       = [for k, v in module.vpc.azs : cidrsubnet(module.vpc.vpc_cidr_block, 4, k + 4)]
