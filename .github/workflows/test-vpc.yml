@@ -10,6 +10,9 @@ on:
     paths:
       - 'vpc/**.tf'
 
+permissions:
+  id-token: write
+
 jobs:
   terraform-formatting:
     defaults:
