@@ -12,6 +12,9 @@ on:
 
 jobs:
   terraform-formatting:
+    defaults:
+      run:
+          working-directory: './vpc/'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
