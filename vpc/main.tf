@@ -27,5 +27,5 @@ module "vpc" {
   enable_flow_log                      = true
   create_flow_log_cloudwatch_iam_role  = true
   create_flow_log_cloudwatch_log_group = true
-  vpc_flow_log_permissions_boundary = var.vpc_flow_log_permissions_boundary
+  vpc_flow_log_permissions_boundary    = var.vpc_flow_log_permissions_boundary
 }
