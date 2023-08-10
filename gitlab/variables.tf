@@ -21,3 +21,8 @@ variable "force_destroy" {
   type        = bool
   default     = false
 }
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
