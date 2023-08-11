@@ -14,7 +14,7 @@ module "irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.28.0"
 
-  role_name = "${var.name_prefix}role"
+  role_name        = "${var.name_prefix}role"
   role_description = "Role for GitLab to access buckets."
 
   role_permissions_boundary_arn = var.role_permissions_boundary_arn
@@ -24,7 +24,7 @@ module "irsa" {
 
   oidc_providers = {
     main = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn               = var.oidc_provider_arn
       namespace_service_accounts = [format("%s:%s", var.kubernetes_namespace, var.kubernetes_service_account)]
     }
   }
@@ -38,19 +38,19 @@ resource "aws_iam_policy" "irsa_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = ["s3:ListBucket"]
+        Effect = "Allow"
+        Action = ["s3:ListBucket"]
         Resource = [
-					for bucket_name in var.bucket_names:
-            "arn:${data.aws_partition.current.partition}:s3:::${bucket_name}"
+          for bucket_name in var.bucket_names :
+          "arn:${data.aws_partition.current.partition}:s3:::${bucket_name}"
         ]
       },
       {
-        Effect   = "Allow"
-        Action   = ["s3:*Object"]
+        Effect = "Allow"
+        Action = ["s3:*Object"]
         Resource = [
-          for bucket_name in var.bucket_names:
-            "arn:${data.aws_partition.current.partition}:s3:::${module.S3.bucket_name}/*"
+          for bucket_name in var.bucket_names :
+          "arn:${data.aws_partition.current.partition}:s3:::${bucket_name}/*"
         ]
       },
       {
@@ -59,24 +59,16 @@ resource "aws_iam_policy" "irsa_policy" {
           "kms:GenerateDataKey",
           "kms:Decrypt"
         ]
-        Resource = ["${module.kms_key.key_arn}"]
+        Resource = ["${module.kms_key.kms_key_arn}"]
       }
     ]
   })
 }
 
 module "kms_key" {
-  source  = "terraform-aws-modules/kms/aws"
-  version = "1.5.0"
-}
+  source = "github.com/defenseunicorns/terraform-aws-uds-kms?ref=v0.0.2"
 
-# Possibly remove in favor of IRSA
-module "s3_user" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
-  version = "5.28.0"
-
-  name = "${var.name_prefix}user"
-
-  create_iam_access_key = true
-  policy_arns           = ["arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonS3FullAccess"]
+  kms_key_alias_name_prefix = var.name_prefix
+  kms_key_deletion_window   = 7
+  kms_key_description       = "GitLab Key"
 }

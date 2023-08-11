@@ -1,2 +1,5 @@
-bucket_name_suffix = "-example"
-region             = "us-east-2"
+name_suffix                = "-example"
+kubernetes_namespace       = "gitlab"
+kubernetes_service_account = "gitlab"
+oidc_provider_arn          = "arn:aws:iam::111111111111:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/22222222222222222222222222222222"
+region                     = "us-east-2"

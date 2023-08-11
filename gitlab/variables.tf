@@ -10,14 +10,14 @@ variable "force_destroy" {
   default     = false
 }
 
-variable "kubernetes_namespace"  {
-    description = "Name of the namespace that the service account exists in. Used to generate fully qualified subject for the service account."
-        type        = string
+variable "kubernetes_namespace" {
+  description = "Name of the namespace that the service account exists in. Used to generate fully qualified subject for the service account."
+  type        = string
 }
 
 variable "kubernetes_service_account" {
-    description = "Name of the service account to bind to. Used to generate fully qualified subject for service account."
-      type        = string
+  description = "Name of the service account to bind to. Used to generate fully qualified subject for service account."
+  type        = string
 }
 
 variable "name_prefix" {
@@ -44,6 +44,6 @@ variable "region" {
 
 variable "role_permissions_boundary_arn" {
   description = "Permissions boundary ARN to use for IAM role"
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
