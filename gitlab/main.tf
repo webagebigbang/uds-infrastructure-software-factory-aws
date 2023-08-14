@@ -1,6 +1,7 @@
 data "aws_partition" "current" {}
 
-# This will create a bucket for each name in `bucket_names`.
+# Object Storage Resources
+
 module "s3_bucket" {
   for_each = toset(var.bucket_names)
 
@@ -72,4 +73,16 @@ module "kms_key" {
   kms_key_alias_name_prefix = var.name_prefix
   kms_key_deletion_window   = 7
   kms_key_description       = "GitLab Key"
+}
+
+# Redis Resources
+
+resource "aws_elasticache_cluster" "redis" {
+  cluster_id = ${var.name_preifx}-cluster
+  engine = "redis"
+  node_type            = "cache.m4.large"
+  num_cache_nodes      = 1
+  parameter_group_name = "default.redis3.2"
+  engine_version       = "3.2.10"
+  port                 = 6379
 }
