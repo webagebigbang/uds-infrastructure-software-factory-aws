@@ -56,10 +56,6 @@ func TestGitLabModule(t *testing.T) {
 
 func getAWSPartition(region string) string {
   partition := endpoints.AwsPartition()
-  //resolvedRegion := partition.Regions()[region]
-  //if resolvedRegion == nil {
-    //return "aws"
-  //}
 
   return partition.ID()
 }
