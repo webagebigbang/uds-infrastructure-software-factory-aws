@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - 'vpc/**.tf'
+      - 'vpc/**.go'
 
 permissions:
   contents: write
@@ -25,17 +26,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: hashicorp/setup-terraform@v2
-
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt
-        continue-on-error: true
-
-      - name: Commit Formatting Changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Apply terraform fmt changes
+      - uses: ./.github/actions/terraform-formatting
 
   terraform-scanning:
     defaults:
@@ -47,22 +38,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: terraform-linters/setup-tflint@v3
-        name: Setup TFLint
-        with:
-          tflint_version: latest
-
-      - name: Show version
-        run: tflint --version
-
-      - name: Init TFLint
-        run: tflint --init
-        env:
-          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Run TFLint
-        run: tflint -f compact
+      - uses: ./.github/actions/terraform-scanning
 
   terraform-tests:
     runs-on: ubuntu-latest

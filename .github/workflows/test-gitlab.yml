@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - 'gitlab/**.tf'
+      - 'gitlab/**.go'
 
 permissions:
   contents: write
