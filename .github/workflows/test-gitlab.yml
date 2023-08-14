@@ -16,6 +16,9 @@ permissions:
 
 jobs:
   terraform-formatting:
+    defaults:
+      run:
+        working-directory: './gitlab/'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,10 +26,11 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - uses: ./.github/actions/terraform-formatting
-        with:
-          working-directory: './gitlab/'
 
   terraform-scanning:
+    defaults:
+      run:
+        working-directory: './gitlab/'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -34,8 +38,6 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - uses: ./.github/actions/terraform-scanning
-        with:
-          working-directory: './gitlab/'
 
   terraform-tests:
     runs-on: ubuntu-latest

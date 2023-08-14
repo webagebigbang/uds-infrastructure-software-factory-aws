@@ -1,16 +1,9 @@
 name: Terraform Formatting
 description: Ensures proper Terraform formatting.
 
-inputs:
-  working-directory:
-    description: 'Working directory'
-    default: '.'
-    type: string
-
 defaults:
   run:
     shell: bash -euo pipefail
-    working-directory: ${{ inputs.working-directory }}
 
 runs:
   using: composite
