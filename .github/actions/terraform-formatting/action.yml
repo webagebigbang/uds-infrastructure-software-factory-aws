@@ -1,0 +1,32 @@
+name: Terraform Formatting
+description: Ensures proper Terraform formatting.
+
+inputs:
+  working-directory:
+    description: 'Working directory'
+    default: '.'
+    type: string
+
+defaults:
+  run:
+    shell: bash -euo pipefail
+    working-directory: ${{ inputs.working-directory }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
+
+    - uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt
+      continue-on-error: true
+
+    - name: Commit Formatting Changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Apply terraform fmt changes
