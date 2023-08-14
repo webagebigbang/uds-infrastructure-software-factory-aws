@@ -80,9 +80,10 @@ module "kms_key" {
 resource "aws_elasticache_cluster" "redis" {
   cluster_id = ${var.name_preifx}-cluster
   engine = "redis"
-  node_type            = "cache.m4.large"
+  node_type            = "cache.r7g.large"
   num_cache_nodes      = 1
-  parameter_group_name = "default.redis3.2"
-  engine_version       = "3.2.10"
+  parameter_group_name = "default.redis7"
+  engine_version       = "7.x"
   port                 = 6379
+  subnet_group_name = var.elasticache_subnet
 }
