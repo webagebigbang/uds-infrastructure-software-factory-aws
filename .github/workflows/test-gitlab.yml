@@ -1,4 +1,4 @@
-name: test-vpc
+name: test-gitlab
 on:
   pull_request:
     types:
@@ -8,8 +8,8 @@ on:
     branches:
       - main
     paths:
-      - 'vpc/**.tf'
-      - 'vpc/**.go'
+      - 'gitlab/**.tf'
+      - 'gitlab/**.go'
 
 permissions:
   contents: write
@@ -19,7 +19,7 @@ jobs:
   terraform-formatting:
     defaults:
       run:
-        working-directory: './vpc/'
+        working-directory: './gitlab/'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,7 +31,7 @@ jobs:
   terraform-scanning:
     defaults:
       run:
-        working-directory: './vpc/'
+        working-directory: './gitlab/'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -58,7 +58,7 @@ jobs:
         uses: defenseunicorns/uds-common-workflows/.github/actions/terraform-test@main
         with:
           test_retry: 1
-          test_dir: ./vpc/test
+          test_dir: ./gitlab/test
         env:
           BACKEND_BUCKET: ${{ vars.BACKEND_BUCKET }}
           BACKEND_KEY: ${{ vars.BACKEND_KEY }}vpc.tfstate

@@ -1,5 +1,6 @@
 data "aws_partition" "current" {}
 
+# This will create a bucket for each name in `bucket_names`.
 module "s3_bucket" {
   for_each = toset(var.bucket_names)
 

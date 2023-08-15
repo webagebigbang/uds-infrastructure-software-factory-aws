@@ -1,0 +1,25 @@
+name: Terraform Scanning
+description: Scan using common checks in Terraform
+
+runs:
+  using: composite
+  steps:
+    - uses: terraform-linters/setup-tflint@v3
+      name: Setup TFLint
+      with:
+        tflint_version: latest
+
+    - name: Show version
+      run: tflint --version
+      shell: bash
+
+    - name: Init TFLint
+      run: tflint --init
+      shell: bash
+      env:
+        # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Run TFLint
+      run: tflint -f compact
+      shell: bash
