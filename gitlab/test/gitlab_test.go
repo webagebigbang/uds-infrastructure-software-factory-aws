@@ -32,7 +32,7 @@ func TestGitLabModule(t *testing.T) {
 			"role_permissions_boundary_arn": os.Getenv("FLOW_LOG_PERMISSION_BOUNDARY"),
       "kubernetes_namespace": "gitlab-test",
       "kubernetes_service_account": "gitlab-test",
-      "name_suffix": nameSuffix,
+      "bucket_name_suffix": nameSuffix,
       "oidc_provider_arn": fmt.Sprintf("arn:%s:iam::111111111111:oidc-provider/oidc.eks.%s.amazonaws.com/id/22222222222222222222222222222222", getAWSPartition(awsRegion), awsRegion),
 		},
 
