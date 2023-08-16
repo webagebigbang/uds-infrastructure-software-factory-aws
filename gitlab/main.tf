@@ -73,3 +73,29 @@ module "kms_key" {
   kms_key_deletion_window   = 7
   kms_key_description       = "GitLab Key"
 }
+
+# RDS
+
+module "rds" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "6.1.1"
+
+  identifier = "gitlab-db"
+
+  allocated_storage       = 20
+  backup_retention_period = 1
+  backup_window           = "03:00-06:00"
+  maintenance_window      = "Mon:00:00-Mon:03:00"
+
+  engine               = "postgres"
+  engine_version       = "15.3"
+  major_engine_version = "15"
+  family               = "postgres15"
+  instance_class       = "db.t3a.large"
+
+  db_name  = "gitlab-uds-software-factory"
+  username = "gitlab"
+  port     = "5432"
+
+  db_subnet_group_name = var.db_subnet_group_name # uds-swf
+}
