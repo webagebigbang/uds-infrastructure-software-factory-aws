@@ -43,7 +43,7 @@ resource "aws_iam_policy" "irsa_policy" {
         Action = ["s3:ListBucket"]
         Resource = [
           for bucket_name in var.bucket_names :
-          "arn:${data.aws_partition.current.partition}:s3:::${bucket_name}"
+          "arn:${data.aws_partition.current.partition}:s3:::${var.name_prefix}${bucket_name}${var.name_suffix}"
         ]
       },
       {
@@ -51,7 +51,7 @@ resource "aws_iam_policy" "irsa_policy" {
         Action = ["s3:*Object"]
         Resource = [
           for bucket_name in var.bucket_names :
-          "arn:${data.aws_partition.current.partition}:s3:::${bucket_name}/*"
+          "arn:${data.aws_partition.current.partition}:s3:::${var.name_prefix}${bucket_name}${var.name_suffix}/*"
         ]
       },
       {
