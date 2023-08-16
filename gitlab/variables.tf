@@ -47,3 +47,10 @@ variable "role_permissions_boundary_arn" {
   type        = string
   default     = null
 }
+
+# RDS
+variable "db_subnet_group_name" {
+  description = "Name of the DB subnet group"
+  type        = string
+  default     = null
+}
