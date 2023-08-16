@@ -61,7 +61,7 @@ func getAWSPartition(region string) string {
 }
 
 func generateNameSuffix() string {
-	chars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-"
+	chars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 	length := 4
 
 	b := make([]byte, length)
