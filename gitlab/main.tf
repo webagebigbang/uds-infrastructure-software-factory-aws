@@ -8,7 +8,7 @@ module "s3_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "3.14.1"
 
-  bucket        = "${var.name_prefix}${each.key}${var.name_suffix}"
+  bucket        = "${var.bucket_name_prefix}${each.key}${var.bucket_name_suffix}"
   force_destroy = var.force_destroy
 }
 
@@ -16,7 +16,7 @@ module "irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.28.0"
 
-  role_name        = "${var.name_prefix}role"
+  role_name        = "${var.bucket_name_prefix}role"
   role_description = "Role for GitLab to access buckets."
 
   role_permissions_boundary_arn = var.role_permissions_boundary_arn
@@ -33,7 +33,7 @@ module "irsa" {
 }
 
 resource "aws_iam_policy" "irsa_policy" {
-  name        = "${var.name_prefix}policy"
+  name        = "${var.bucket_name_prefix}policy"
   path        = "/"
   description = "IRSA policy to access GitLab buckets."
   policy = jsonencode({
@@ -70,20 +70,28 @@ resource "aws_iam_policy" "irsa_policy" {
 module "kms_key" {
   source = "github.com/defenseunicorns/terraform-aws-uds-kms?ref=v0.0.2"
 
-  kms_key_alias_name_prefix = var.name_prefix
+  kms_key_alias_name_prefix = var.kms_key_alias
   kms_key_deletion_window   = 7
   kms_key_description       = "GitLab Key"
 }
 
 # Redis Resources
 
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id = ${var.name_preifx}-cluster
-  engine = "redis"
+resource "aws_elasticache_replication_group" "redis_cluster_mode" {
+  replication_group_id = var.elasticache_cluster_name
+  description          = "Redis Replication Group for GitLab"
+
+  subnet_group_name = var.elasticache_subnet_group_name
+
   node_type            = "cache.r7g.large"
-  num_cache_nodes      = 1
-  parameter_group_name = "default.redis7"
-  engine_version       = "7.x"
-  port                 = 6379
-  subnet_group_name = var.elasticache_subnet
+  engine_version       = "7.0"
+  parameter_group_name = "default.redis7.cluster.on"
+
+  num_cache_clusters = 2
+
+  automatic_failover_enabled = true
+  multi_az_enabled           = true
+
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
 }
