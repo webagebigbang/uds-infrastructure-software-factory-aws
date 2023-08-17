@@ -58,6 +58,18 @@ variable "role_permissions_boundary_arn" {
 
 # Elasticache Variables
 
+variable "create_cache_testing_subnets" {
+  description = "Whether to create subnets for Elasticache.  Note: if this is true, create_cache_testing_vpc must be true or vpc_id must be set but not both."
+  type        = bool
+  default     = false
+}
+
+variable "create_cache_testing_vpc" {
+  description = "Whether to create a VPC in order to test Elasticache.  Note: if create_cache_testing_subnets is true, this must be true or vpc_id must be set but not both."
+  type        = bool
+  default     = false
+}
+
 variable "elasticache_cluster_name" {
   description = "Elasticache Cluster Name"
   type        = string
@@ -66,6 +78,12 @@ variable "elasticache_cluster_name" {
 
 variable "elasticache_subnet_group_name" {
   description = "Subnet group name to use for Elasticache"
+  type        = string
+  default     = ""
+}
+
+variable "vpc_id" {
+  description = "VPC ID tpo test Elasticache.  Note: if create_cache_testing_subnets is true, this must be set or create_cache_testing_vpc is true but not both."
   type        = string
   default     = ""
 }

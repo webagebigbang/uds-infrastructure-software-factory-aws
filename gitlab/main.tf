@@ -1,5 +1,14 @@
 data "aws_partition" "current" {}
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+locals {
+  elasticache_subnet_group_name = var.create_cache_testing_subnets ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
+  vpc_id                        = var.create_cache_testing_vpc ? aws_vpc.test_vpc[0].id : var.vpc_id
+}
+
 # Object Storage Resources
 
 module "s3_bucket" {
@@ -16,7 +25,7 @@ module "irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.28.0"
 
-  role_name        = "${var.bucket_name_prefix}role"
+  role_name        = "${var.bucket_name_prefix}role${var.bucket_name_suffix}"
   role_description = "Role for GitLab to access buckets."
 
   role_permissions_boundary_arn = var.role_permissions_boundary_arn
@@ -33,7 +42,7 @@ module "irsa" {
 }
 
 resource "aws_iam_policy" "irsa_policy" {
-  name        = "${var.bucket_name_prefix}policy"
+  name        = "${var.bucket_name_prefix}policy${var.bucket_name_suffix}"
   path        = "/"
   description = "IRSA policy to access GitLab buckets."
   policy = jsonencode({
@@ -81,9 +90,9 @@ resource "aws_elasticache_replication_group" "redis_cluster_mode" {
   replication_group_id = var.elasticache_cluster_name
   description          = "Redis Replication Group for GitLab"
 
-  subnet_group_name = var.elasticache_subnet_group_name
+  subnet_group_name = local.elasticache_subnet_group_name
 
-  node_type            = "cache.r7g.large"
+  node_type            = "cache.r6g.large"
   engine_version       = "7.0"
   parameter_group_name = "default.redis7.cluster.on"
 
@@ -94,4 +103,31 @@ resource "aws_elasticache_replication_group" "redis_cluster_mode" {
 
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
+}
+
+## These are used for testing Elasticache only.
+
+resource "aws_vpc" "test_vpc" {
+  count      = var.create_cache_testing_vpc ? 1 : 0
+  cidr_block = "10.4.0.0/16"
+}
+
+resource "aws_subnet" "test_subnet0" {
+  count             = var.create_cache_testing_subnets ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
+  cidr_block        = "10.4.6.0/24"
+  availability_zone = data.aws_availability_zones.available.names[0]
+}
+
+resource "aws_subnet" "test_subnet1" {
+  count             = var.create_cache_testing_subnets ? 1 : 0
+  vpc_id            = local.vpc_id #aws_vpc.test_vpc[0].id
+  cidr_block        = "10.4.7.0/24"
+  availability_zone = data.aws_availability_zones.available.names[1]
+}
+
+resource "aws_elasticache_subnet_group" "test_cache_subnet" {
+  count      = var.create_cache_testing_subnets ? 1 : 0
+  name       = "test-cache-subnet"
+  subnet_ids = [aws_subnet.test_subnet0[0].id, aws_subnet.test_subnet1[0].id]
 }
