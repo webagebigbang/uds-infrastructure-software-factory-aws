@@ -21,7 +21,12 @@ const (
 var approvedRegions = []string{"us-east-1", "us-east-2", "us-west-1", "us-west-2"}
 
 func TestGitLabModule(t *testing.T) {
-	awsRegion := aws.GetRandomStableRegion(t, approvedRegions, nil)
+
+	// We expect a region from CI.  If it's not there, get an approved one.
+	awsRegion := os.Getenv("REGION")
+	if awsRegion == "" {
+		awsRegion = aws.GetRandomStableRegion(t, approvedRegions, nil)
+	}
 
 	nameSuffix := generateNameSuffix()
 

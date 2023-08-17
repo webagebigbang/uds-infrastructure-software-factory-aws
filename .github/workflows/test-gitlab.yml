@@ -65,3 +65,5 @@ jobs:
           BACKEND_REGION: ${{ vars.BACKEND_REGION }}
           BACKEND_DYNAMODB_TABLE: ${{ vars.BACKEND_DYNAMODB_TABLE }}
           FLOW_LOG_PERMISSION_BOUNDARY: ${{ vars.FLOW_LOG_PERMISSION_BOUNDARY }}
+          REGION: ${{ vars.REGION }}
+          VPC_ID: ${{ vars.VPC_ID }}
