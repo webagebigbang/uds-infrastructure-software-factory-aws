@@ -1,3 +1,10 @@
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
+# Object Storage
+
 variable "bucket_names" {
   description = "List of buckets to create"
   type        = list(string)
@@ -37,11 +44,6 @@ variable "oidc_provider_arn" {
   type        = string
 }
 
-variable "region" {
-  description = "AWS region"
-  type        = string
-}
-
 variable "role_permissions_boundary_arn" {
   description = "Permissions boundary ARN to use for IAM role"
   type        = string
@@ -49,6 +51,7 @@ variable "role_permissions_boundary_arn" {
 }
 
 # RDS
+
 variable "db_subnet_group_name" {
   description = "Name of the DB subnet group"
   type        = string

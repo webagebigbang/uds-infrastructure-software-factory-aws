@@ -15,7 +15,7 @@ module "irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.28.0"
 
-  role_name        = "${var.name_prefix}role"
+  role_name        = "${var.name_prefix}role${var.name_suffix}"
   role_description = "Role for GitLab to access buckets."
 
   role_permissions_boundary_arn = var.role_permissions_boundary_arn
@@ -32,7 +32,7 @@ module "irsa" {
 }
 
 resource "aws_iam_policy" "irsa_policy" {
-  name        = "${var.name_prefix}policy"
+  name        = "${var.name_prefix}policy${var.name_suffix}"
   path        = "/"
   description = "IRSA policy to access GitLab buckets."
   policy = jsonencode({
@@ -91,9 +91,9 @@ module "rds" {
   engine_version       = "15.3"
   major_engine_version = "15"
   family               = "postgres15"
-  instance_class       = "db.t3a.large"
+  instance_class       = "db.t4g.large"
 
-  db_name  = "gitlab-uds-software-factory"
+  db_name  = "gitlabudssoftwarefactory"
   username = "gitlab"
   port     = "5432"
 
