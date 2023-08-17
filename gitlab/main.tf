@@ -115,14 +115,12 @@ resource "aws_vpc" "test_vpc" {
 resource "aws_subnet" "test_subnet0" {
   count             = var.create_cache_testing_subnets ? 1 : 0
   vpc_id            = local.vpc_id
-  cidr_block        = "10.4.6.0/24"
   availability_zone = data.aws_availability_zones.available.names[0]
 }
 
 resource "aws_subnet" "test_subnet1" {
   count             = var.create_cache_testing_subnets ? 1 : 0
   vpc_id            = local.vpc_id
-  cidr_block        = "10.4.7.0/24"
   availability_zone = data.aws_availability_zones.available.names[1]
 }
 
