@@ -9,6 +9,19 @@ output "s3_bucket_id" {
   value = values(module.s3_bucket).*.s3_bucket_id
 }
 
+# Elasticache
+output "elasticache_configuration_arn" {
+  value = aws_elasticache_replication_group.redis_cluster_mode.arn
+}
+
+output "elasticache_configuration_id" {
+  value = aws_elasticache_replication_group.redis_cluster_mode.id
+}
+
+output "elasticache_configuration_endpoint" {
+  value = aws_elasticache_replication_group.redis_cluster_mode.configuration_endpoint_address
+}
+
 # RDS
 
 output "db_instance_endpoint" {

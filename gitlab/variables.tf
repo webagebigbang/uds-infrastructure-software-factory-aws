@@ -3,7 +3,13 @@ variable "region" {
   type        = string
 }
 
-# Object Storage
+variable "create_testing_resources" {
+  description = "Whether to create VPC and subnets for local testing."
+  type        = bool
+  default     = false
+}
+
+# Object Storage Variables (including related IAM and KMS)
 
 variable "bucket_names" {
   description = "List of buckets to create"
@@ -27,16 +33,22 @@ variable "kubernetes_service_account" {
   type        = string
 }
 
-variable "name_prefix" {
+variable "bucket_name_prefix" {
   description = "Optional prefix for resource names"
   type        = string
-  default     = "uds-swf-"
+  default     = "uds-"
 }
 
-variable "name_suffix" {
+variable "bucket_name_suffix" {
   description = "Optional suffix for resource names"
   type        = string
   default     = ""
+}
+
+variable "kms_key_alias" {
+  description = "KMS Key Alias name prefix"
+  type        = string
+  default     = "uds-gitlab"
 }
 
 variable "oidc_provider_arn" {
@@ -48,12 +60,6 @@ variable "role_permissions_boundary_arn" {
   description = "Permissions boundary ARN to use for IAM role"
   type        = string
   default     = null
-}
-
-variable "create_testing_resources" {
-  description = "Whether to create VPC and subnets for local testing."
-  type        = bool
-  default     = false
 }
 
 # RDS
@@ -68,4 +74,17 @@ variable "gitlab_db_name" {
   description = "Name of the GitLab database."
   type        = string
   default     = "gitlabdb"
+
+# Elasticache Variables
+
+variable "elasticache_cluster_name" {
+  description = "Elasticache Cluster Name"
+  type        = string
+  default     = "uds-gitlab-cluster"
+}
+
+variable "elasticache_subnet_group_name" {
+  description = "Subnet group name to use for Elasticache"
+  type        = string
+  default     = ""
 }
