@@ -1,5 +1,13 @@
 data "aws_partition" "current" {}
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+locals {
+  db_subnet_group_name = var.create_testing_resources ? module.db_subnet_group.db_subnet_group_id : var.db_subnet_group_name
+}
+
 # This will create a bucket for each name in `bucket_names`.
 module "s3_bucket" {
   for_each = toset(var.bucket_names)
@@ -93,9 +101,39 @@ module "rds" {
   family               = "postgres15"
   instance_class       = "db.t4g.large"
 
-  db_name  = "gitlabudssoftwarefactory"
+  db_name  = var.gitlab_db_name
   username = "gitlab"
   port     = "5432"
 
-  db_subnet_group_name = var.db_subnet_group_name # uds-swf
+  db_subnet_group_name = local.db_subnet_group_name # uds-swf
+}
+
+## These are used for testing Elasticache locally only.
+
+resource "aws_vpc" "test_vpc" {
+  count      = var.create_testing_resources ? 1 : 0
+  cidr_block = "10.4.0.0/16"
+}
+
+resource "aws_subnet" "test_db_subnet0" {
+  count             = var.create_testing_resources ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
+  availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block        = "10.4.2.0/24"
+}
+
+resource "aws_subnet" "test_db_subnet1" {
+  count             = var.create_testing_resources ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
+  availability_zone = data.aws_availability_zones.available.names[1]
+  cidr_block        = "10.4.3.0/24"
+}
+
+module "db_subnet_group" {
+  source  = "terraform-aws-modules/rds/aws//modules/db_subnet_group"
+  version = "6.1.1"
+
+  create     = var.create_testing_resources
+  name       = "rds_db_subnet_group"
+  subnet_ids = [aws_subnet.test_db_subnet0[0].id, aws_subnet.test_db_subnet1[0].id]
 }

@@ -50,10 +50,22 @@ variable "role_permissions_boundary_arn" {
   default     = null
 }
 
+variable "create_testing_resources" {
+  description = "Whether to create VPC and subnets for local testing."
+  type        = bool
+  default     = false
+}
+
 # RDS
 
 variable "db_subnet_group_name" {
   description = "Name of the DB subnet group"
   type        = string
   default     = null
+}
+
+variable "gitlab_db_name" {
+  description = "Name of the GitLab database."
+  type        = string
+  default     = "gitlabdb"
 }
