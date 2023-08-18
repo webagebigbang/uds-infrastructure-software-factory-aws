@@ -74,6 +74,7 @@ variable "gitlab_db_name" {
   description = "Name of the GitLab database."
   type        = string
   default     = "gitlabdb"
+}
 
 # Elasticache Variables
 

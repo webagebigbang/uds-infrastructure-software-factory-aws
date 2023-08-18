@@ -27,29 +27,28 @@ func TestGitLabModule(t *testing.T) {
 		awsRegion = aws.GetRandomStableRegion(t, approvedRegions, nil)
 	}
 
-  // CI should pass in subnet group names for RDS and Elasticache.  If one of them is missing, this assumes we want to
-  // create a VPC and subnet groups for testing.  This is mainly used for running tests locally.
+	// CI should pass in subnet group names for RDS and Elasticache.  If one of them is missing, this assumes we want to
+	// create a VPC and subnet groups for testing.  This is mainly used for running tests locally.
 	cacheSubnetGroup := os.Getenv("ELASTICACHE_SUBNET_GROUP")
 	dbSubnetGroup := os.Getenv("DB_SUBNET_GROUP")
 	createTestingResources := false
 	if dbSubnetGroup == "" || cacheSubnetGroup == "" {
 		createTestingResources = true
-  }
-
+	}
 
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: testDir,
 		Vars: map[string]interface{}{
-			"region":                    awsRegion,
+			"region":                        awsRegion,
 			"role_permissions_boundary_arn": os.Getenv("FLOW_LOG_PERMISSION_BOUNDARY"),
 			"kubernetes_namespace":          "gitlab-test",
 			"kubernetes_service_account":    "gitlab-test",
-			"name_suffix":                   nameSuffix,
+			"bucket_name_suffix":            nameSuffix,
 			"oidc_provider_arn":             fmt.Sprintf("arn:%s:iam::111111111111:oidc-provider/oidc.eks.%s.amazonaws.com/id/22222222222222222222222222222222", getAWSPartition(awsRegion), awsRegion),
 			"create_testing_resources":      createTestingResources,
-			"elasticache_cluster_name":       "terratest-gitlab-cache",
-			"elasticache_subnet_group_name":  cacheSubnetGroup,
-      "db_subnet_group_name": dbSubnetGroup,
+			"elasticache_cluster_name":      "terratest-gitlab-cache",
+			"elasticache_subnet_group_name": cacheSubnetGroup,
+			"db_subnet_group_name":          dbSubnetGroup,
 		},
 
 		BackendConfig: map[string]interface{}{

@@ -64,6 +64,7 @@ jobs:
           BACKEND_KEY: ${{ vars.BACKEND_KEY }}vpc.tfstate
           BACKEND_REGION: ${{ vars.BACKEND_REGION }}
           BACKEND_DYNAMODB_TABLE: ${{ vars.BACKEND_DYNAMODB_TABLE }}
+          DB_SUBNET_GROUP: ${{ vars.DB_SUBNET_GROUP }}
+          ELASTICACHE_SUBNET_GROUP: ${{ ELASTICACHE_SUBNET_GROUP }}
           FLOW_LOG_PERMISSION_BOUNDARY: ${{ vars.FLOW_LOG_PERMISSION_BOUNDARY }}
           REGION: ${{ vars.REGION }}
-          VPC_ID: ${{ vars.VPC_ID }}
