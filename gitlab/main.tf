@@ -5,8 +5,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  elasticache_subnet_group_name = var.create_cache_testing_subnets ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
-  vpc_id                        = var.create_cache_testing_vpc ? aws_vpc.test_vpc[0].id : var.vpc_id
+  elasticache_subnet_group_name = var.create_cache_testing_resources ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
 }
 
 # Object Storage Resources
@@ -105,27 +104,29 @@ resource "aws_elasticache_replication_group" "redis_cluster_mode" {
   transit_encryption_enabled = true
 }
 
-## These are used for testing Elasticache only.
+## These are used for testing Elasticache locally only.
 
 resource "aws_vpc" "test_vpc" {
-  count      = var.create_cache_testing_vpc ? 1 : 0
+  count      = var.create_cache_testing_resources ? 1 : 0
   cidr_block = "10.4.0.0/16"
 }
 
 resource "aws_subnet" "test_subnet0" {
-  count             = var.create_cache_testing_subnets ? 1 : 0
-  vpc_id            = local.vpc_id
+  count             = var.create_cache_testing_resources ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
   availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block        = "10.4.0.0/24"
 }
 
 resource "aws_subnet" "test_subnet1" {
-  count             = var.create_cache_testing_subnets ? 1 : 0
-  vpc_id            = local.vpc_id
+  count             = var.create_cache_testing_resources ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
   availability_zone = data.aws_availability_zones.available.names[1]
+  cidr_block        = "10.4.1.0/24"
 }
 
 resource "aws_elasticache_subnet_group" "test_cache_subnet" {
-  count      = var.create_cache_testing_subnets ? 1 : 0
+  count      = var.create_cache_testing_resources ? 1 : 0
   name       = "test-cache-subnet"
   subnet_ids = [aws_subnet.test_subnet0[0].id, aws_subnet.test_subnet1[0].id]
 }

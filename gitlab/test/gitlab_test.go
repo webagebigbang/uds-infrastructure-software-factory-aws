@@ -30,26 +30,25 @@ func TestGitLabModule(t *testing.T) {
 
 	nameSuffix := generateNameSuffix()
 
-	// This is used for testing Elasticache in its own subnets
-	vpcId := os.Getenv("VPC_ID")
-	createCacheTestingVpc := false
-	if vpcId == "" {
-		createCacheTestingVpc = true
+	// This is used for testing Elasticache in its own subnets locally.  Ideally, this information will be passed in.
+	cacheSubnetGroup := os.Getenv("ELASTICACHE_SUBNET_GROUP")
+	createCacheTestingResources := false
+	if cacheSubnetGroup == "" {
+		createCacheTestingResources = true
 	}
 
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: testDir,
 		Vars: map[string]interface{}{
-			awsRegionVar:                    awsRegion,
-			"role_permissions_boundary_arn": os.Getenv("FLOW_LOG_PERMISSION_BOUNDARY"),
-			"kubernetes_namespace":          "gitlab-test",
-			"kubernetes_service_account":    "gitlab-test",
-			"bucket_name_suffix":            nameSuffix,
-			"oidc_provider_arn":             fmt.Sprintf("arn:%s:iam::111111111111:oidc-provider/oidc.eks.%s.amazonaws.com/id/22222222222222222222222222222222", getAWSPartition(awsRegion), awsRegion),
-			"create_cache_testing_vpc":      createCacheTestingVpc,
-			"vpc_id":                        vpcId,
-			"create_cache_testing_subnets":  true,
-			"elasticache_cluster_name":      "terratest-gitlab-cache",
+			awsRegionVar:                     awsRegion,
+			"role_permissions_boundary_arn":  os.Getenv("FLOW_LOG_PERMISSION_BOUNDARY"),
+			"kubernetes_namespace":           "gitlab-test",
+			"kubernetes_service_account":     "gitlab-test",
+			"bucket_name_suffix":             nameSuffix,
+			"oidc_provider_arn":              fmt.Sprintf("arn:%s:iam::111111111111:oidc-provider/oidc.eks.%s.amazonaws.com/id/22222222222222222222222222222222", getAWSPartition(awsRegion), awsRegion),
+			"create_cache_testing_resources": createCacheTestingResources,
+			"elasticache_cluster_name":       "terratest-gitlab-cache",
+			"elasticache_subnet_group_name":  cacheSubnetGroup,
 		},
 
 		BackendConfig: map[string]interface{}{
