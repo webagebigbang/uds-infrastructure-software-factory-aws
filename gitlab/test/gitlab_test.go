@@ -48,6 +48,7 @@ func TestGitLabModule(t *testing.T) {
 			"oidc_provider_arn":              fmt.Sprintf("arn:%s:iam::111111111111:oidc-provider/oidc.eks.%s.amazonaws.com/id/22222222222222222222222222222222", getAWSPartition(awsRegion), awsRegion),
 			"create_cache_testing_resources": createCacheTestingResources,
 			"elasticache_cluster_name":       "terratest-gitlab-cache",
+			"elasticache_password":           "terratestcachepassword",
 			"elasticache_subnet_group_name":  cacheSubnetGroup,
 		},
 

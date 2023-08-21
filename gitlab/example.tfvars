@@ -8,3 +8,4 @@ oidc_provider_arn          = "arn:aws:iam::111111111111:oidc-provider/oidc.eks.u
 
 # Elasticache Variables
 elasticache_subnet_group_name = "uds-swf"
+elasticache_password = "mysecretudsswfpassword"
