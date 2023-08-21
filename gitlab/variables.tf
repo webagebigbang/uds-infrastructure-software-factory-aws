@@ -70,6 +70,12 @@ variable "elasticache_cluster_name" {
   default     = "uds-gitlab-cluster"
 }
 
+variable "elasticache_password" {
+  description = "Password for Elasticache auth."
+  type        = string
+  sensitive   = true
+}
+
 variable "elasticache_subnet_group_name" {
   description = "Subnet group name to use for Elasticache"
   type        = string

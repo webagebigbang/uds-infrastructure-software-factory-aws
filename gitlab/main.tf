@@ -94,6 +94,7 @@ resource "aws_elasticache_replication_group" "redis_cluster_mode" {
   node_type            = "cache.r6g.large"
   engine_version       = "7.0"
   parameter_group_name = "default.redis7.cluster.on"
+  auth_token           = var.elasticache_password
 
   num_cache_clusters = 2
 
