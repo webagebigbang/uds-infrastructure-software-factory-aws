@@ -11,3 +11,4 @@ db_subnet_group_name = "uds-swf"
 
 # Elasticache Variables
 elasticache_subnet_group_name = "uds-swf"
+elasticache_password = "mysecretudsswfpassword"
