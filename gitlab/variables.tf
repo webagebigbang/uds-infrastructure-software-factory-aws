@@ -3,6 +3,12 @@ variable "region" {
   type        = string
 }
 
+variable "create_testing_resources" {
+  description = "Whether to create VPC and subnets for local testing."
+  type        = bool
+  default     = false
+}
+
 # Object Storage Variables (including related IAM and KMS)
 
 variable "bucket_names" {
@@ -56,13 +62,21 @@ variable "role_permissions_boundary_arn" {
   default     = null
 }
 
-# Elasticache Variables
+# RDS
 
-variable "create_cache_testing_resources" {
-  description = "Whether to create VPC and subnets for testing Elasticache."
-  type        = bool
-  default     = false
+variable "db_subnet_group_name" {
+  description = "Name of the DB subnet group"
+  type        = string
+  default     = null
 }
+
+variable "gitlab_db_name" {
+  description = "Name of the GitLab database."
+  type        = string
+  default     = "gitlabdb"
+}
+
+# Elasticache Variables
 
 variable "elasticache_cluster_name" {
   description = "Elasticache Cluster Name"

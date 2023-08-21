@@ -5,11 +5,13 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  elasticache_subnet_group_name = var.create_cache_testing_resources ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
+  db_subnet_group_name          = var.create_testing_resources ? module.db_subnet_group.db_subnet_group_id : var.db_subnet_group_name
+  elasticache_subnet_group_name = var.create_testing_resources ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
 }
 
 # Object Storage Resources
 
+## This will create a bucket for each name in `bucket_names`.
 module "s3_bucket" {
   for_each = toset(var.bucket_names)
 
@@ -83,6 +85,32 @@ module "kms_key" {
   kms_key_description       = "GitLab Key"
 }
 
+# RDS
+
+module "rds" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "6.1.1"
+
+  identifier = "gitlab-db"
+
+  allocated_storage       = 20
+  backup_retention_period = 1
+  backup_window           = "03:00-06:00"
+  maintenance_window      = "Mon:00:00-Mon:03:00"
+
+  engine               = "postgres"
+  engine_version       = "15.3"
+  major_engine_version = "15"
+  family               = "postgres15"
+  instance_class       = "db.t4g.large"
+
+  db_name  = var.gitlab_db_name
+  username = "gitlab"
+  port     = "5432"
+
+  db_subnet_group_name = local.db_subnet_group_name
+}
+
 # Redis Resources
 
 resource "aws_elasticache_replication_group" "redis_cluster_mode" {
@@ -105,29 +133,52 @@ resource "aws_elasticache_replication_group" "redis_cluster_mode" {
   transit_encryption_enabled = true
 }
 
-## These are used for testing Elasticache locally only.
+## These are used for testing Elasticache and RDS locally only.  CI will provide subnets.
 
 resource "aws_vpc" "test_vpc" {
-  count      = var.create_cache_testing_resources ? 1 : 0
+  count      = var.create_testing_resources ? 1 : 0
   cidr_block = "10.4.0.0/16"
 }
 
-resource "aws_subnet" "test_subnet0" {
-  count             = var.create_cache_testing_resources ? 1 : 0
+resource "aws_subnet" "test_db_subnet0" {
+  count             = var.create_testing_resources ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
+  availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block        = "10.4.2.0/24"
+}
+
+resource "aws_subnet" "test_db_subnet1" {
+  count             = var.create_testing_resources ? 1 : 0
+  vpc_id            = aws_vpc.test_vpc[0].id
+  availability_zone = data.aws_availability_zones.available.names[1]
+  cidr_block        = "10.4.3.0/24"
+}
+
+module "db_subnet_group" {
+  source  = "terraform-aws-modules/rds/aws//modules/db_subnet_group"
+  version = "6.1.1"
+
+  create     = var.create_testing_resources
+  name       = "rds_db_subnet_group"
+  subnet_ids = [aws_subnet.test_db_subnet0[0].id, aws_subnet.test_db_subnet1[0].id]
+}
+
+resource "aws_subnet" "test_cache_subnet0" {
+  count             = var.create_testing_resources ? 1 : 0
   vpc_id            = aws_vpc.test_vpc[0].id
   availability_zone = data.aws_availability_zones.available.names[0]
   cidr_block        = "10.4.0.0/24"
 }
 
-resource "aws_subnet" "test_subnet1" {
-  count             = var.create_cache_testing_resources ? 1 : 0
+resource "aws_subnet" "test_cache_subnet1" {
+  count             = var.create_testing_resources ? 1 : 0
   vpc_id            = aws_vpc.test_vpc[0].id
   availability_zone = data.aws_availability_zones.available.names[1]
   cidr_block        = "10.4.1.0/24"
 }
 
 resource "aws_elasticache_subnet_group" "test_cache_subnet" {
-  count      = var.create_cache_testing_resources ? 1 : 0
+  count      = var.create_testing_resources ? 1 : 0
   name       = "test-cache-subnet"
-  subnet_ids = [aws_subnet.test_subnet0[0].id, aws_subnet.test_subnet1[0].id]
+  subnet_ids = [aws_subnet.test_cache_subnet0[0].id, aws_subnet.test_cache_subnet1[0].id]
 }
