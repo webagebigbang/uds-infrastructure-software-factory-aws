@@ -64,7 +64,7 @@ variable "role_permissions_boundary_arn" {
 
 # RDS
 
-variable "db_subnet_group_name" {
+variable "gitlab_db_subnet_group_name" {
   description = "Name of the DB subnet group"
   type        = string
   default     = null
@@ -74,6 +74,12 @@ variable "gitlab_db_name" {
   description = "Name of the GitLab database."
   type        = string
   default     = "gitlabdb"
+}
+
+variable "gitlab_db_password" {
+  description = "Password for the master DB user. Note that this may show up in logs, and it will be stored in the state file. Passing this password will tell AWS we do not want it to manage the password for us.  Leaving this null will tell AWS to manage the password."
+  type        = string
+  default     = null
 }
 
 # Elasticache Variables
