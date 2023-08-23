@@ -158,6 +158,7 @@ resource "aws_subnet" "test_db_subnet1" {
 }
 
 module "db_subnet_group" {
+  count             = var.create_testing_resources ? 1 : 0
   source  = "terraform-aws-modules/rds/aws//modules/db_subnet_group"
   version = "6.1.1"
 
