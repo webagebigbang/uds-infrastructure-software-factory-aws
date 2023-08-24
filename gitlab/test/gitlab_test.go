@@ -50,6 +50,8 @@ func TestGitLabModule(t *testing.T) {
 			"elasticache_password":          "terratestcachepassword",
 			"elasticache_subnet_group_name": cacheSubnetGroup,
 			"gitlab_db_subnet_group_name":   dbSubnetGroup,
+			"idam_db_subnet_group_name":   dbSubnetGroup,
+			"sonarqube_db_subnet_group_name":   dbSubnetGroup,
 		},
 
 		BackendConfig: map[string]interface{}{

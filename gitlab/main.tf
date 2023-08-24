@@ -87,31 +87,46 @@ module "kms_key" {
 
 # RDS
 
-module "rds" {
-  source  = "terraform-aws-modules/rds/aws"
-  version = "6.1.1"
+module "gitlab_db" { #"rds" {
+  source  = "../modules/rds" #"terraform-aws-modules/rds/aws"
+  #version = "6.1.1"
 
   identifier = "gitlab-db"
 
-  allocated_storage       = 20
-  backup_retention_period = 1
-  backup_window           = "03:00-06:00"
-  maintenance_window      = "Mon:00:00-Mon:03:00"
-
-  engine               = "postgres"
-  engine_version       = "15.3"
-  major_engine_version = "15"
-  family               = "postgres15"
-  instance_class       = "db.t4g.large"
-
   db_name  = var.gitlab_db_name
   username = "gitlab"
-  port     = "5432"
 
-  db_subnet_group_name = local.db_subnet_group_name
+  subnet_group_name = local.db_subnet_group_name
 
-  manage_master_user_password = var.gitlab_db_password == null
   password = var.gitlab_db_password
+}
+
+module "idam_db" {
+  source  = "../modules/rds" #"terraform-aws-modules/rds/aws"
+  #version = "6.1.1"
+
+  identifier = "keycloak-db"
+
+  db_name  = var.sonarqube_db_name #"keycloak"
+  username = "kcadmin"
+
+  subnet_group_name = local.db_subnet_group_name
+
+  password = var.idam_db_password
+}
+
+module "sonarqube_db" {
+  source  = "../modules/rds" #"terraform-aws-modules/rds/aws"
+  #version = "6.1.1"
+
+  identifier = "sonarqube-db"
+
+  db_name  = var.sonarqube_db_name # sonarqubedb
+  username = "sonarqube"
+
+  subnet_group_name = local.db_subnet_group_name
+
+  password = var.sonarqube_db_password
 }
 
 # Redis Resources
