@@ -87,9 +87,8 @@ module "kms_key" {
 
 # RDS
 
-module "gitlab_db" { #"rds" {
-  source  = "../modules/rds" #"terraform-aws-modules/rds/aws"
-  #version = "6.1.1"
+module "gitlab_db" {
+  source = "../modules/rds"
 
   identifier = "gitlab-db"
 
@@ -102,12 +101,11 @@ module "gitlab_db" { #"rds" {
 }
 
 module "idam_db" {
-  source  = "../modules/rds" #"terraform-aws-modules/rds/aws"
-  #version = "6.1.1"
+  source = "../modules/rds"
 
   identifier = "keycloak-db"
 
-  db_name  = var.sonarqube_db_name #"keycloak"
+  db_name  = var.sonarqube_db_name
   username = "kcadmin"
 
   subnet_group_name = local.db_subnet_group_name
@@ -116,12 +114,11 @@ module "idam_db" {
 }
 
 module "sonarqube_db" {
-  source  = "../modules/rds" #"terraform-aws-modules/rds/aws"
-  #version = "6.1.1"
+  source = "../modules/rds"
 
   identifier = "sonarqube-db"
 
-  db_name  = var.sonarqube_db_name # sonarqubedb
+  db_name  = var.sonarqube_db_name
   username = "sonarqube"
 
   subnet_group_name = local.db_subnet_group_name
@@ -173,7 +170,7 @@ resource "aws_subnet" "test_db_subnet1" {
 }
 
 module "db_subnet_group" {
-  count             = var.create_testing_resources ? 1 : 0
+  count   = var.create_testing_resources ? 1 : 0
   source  = "terraform-aws-modules/rds/aws//modules/db_subnet_group"
   version = "6.1.1"
 
