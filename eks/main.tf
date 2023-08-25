@@ -51,7 +51,7 @@ module "cluster" {
   eks_managed_node_groups         = local.eks_managed_node_groups
 
   # k8s Cluster Autoscaler
-  enable_cluster_autoscaler = true
+  #enable_cluster_autoscaler = true
 
   enable_amazon_eks_aws_ebs_csi_driver = true
   enable_gp3_default_storage_class     = true
@@ -75,6 +75,10 @@ module "cluster" {
 					}
 				}
 			JSON
+    }
+
+    aws-ebs-csi-driver = {
+      irsa_iam_permissions_boundary = var.iam_role_permissions_boundary
     }
   }
 }
