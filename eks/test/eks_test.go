@@ -37,12 +37,14 @@ func TestEksModule(t *testing.T) {
 		createTestResources = true
 	}
 
+	clusterName := generateClusterName()
+
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: testDir,
 		Vars: map[string]interface{}{
 			"region":                        awsRegion,
 			"create_test_resources":         createTestResources,
-			"cluster_name":                  generateClusterName(),
+			"cluster_name":                  clusterName,
 			"vpc_id":                        vpcId,
 			"iam_role_permissions_boundary": iamRolePermissionsBoundary,
 			"cluster_subnets":               strings.Split(clusterSubnets, ","),
@@ -51,7 +53,7 @@ func TestEksModule(t *testing.T) {
 
 		BackendConfig: map[string]interface{}{
 			"bucket":         os.Getenv("BACKEND_BUCKET"),
-			"key":            "swf-eks-terratest.tfstate",
+			"key":            fmt.Sprintf("%s-terratest.tfstate", clusterName),
 			"region":         os.Getenv("BACKEND_REGION"),
 			"dynamodb_table": os.Getenv("BACKEND_DYNAMODB_TABLE"),
 		},
