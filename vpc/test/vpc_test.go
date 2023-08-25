@@ -18,6 +18,7 @@ const (
 	flowLogBoundaryVar = "vpc_flow_log_permissions_boundary"
 	nameOutput         = "name"
 	nameVar            = "name"
+  secondaryCidrVar   = "secondary_cidr_blocks",
 	testDir            = "../"
 )
 
@@ -31,6 +32,7 @@ func TestVPCModule(t *testing.T) {
 		Vars: map[string]interface{}{
 			awsRegionVar:       awsRegion,
 			cidrVar:            "10.0.0.0/16",
+      secondaryCidrVar:   ["100.64.0.0/16"],
 			flowLogBoundaryVar: os.Getenv("FLOW_LOG_PERMISSION_BOUNDARY"),
 			nameVar:            generateVpcName(),
 		},
