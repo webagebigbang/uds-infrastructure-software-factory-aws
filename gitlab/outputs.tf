@@ -24,26 +24,74 @@ output "elasticache_configuration_endpoint" {
 
 # RDS
 
-output "db_instance_endpoint" {
-  description = "The connection endpoint"
-  value       = module.rds.db_instance_endpoint
+output "gitlab_db_instance_endpoint" {
+  description = "GitLab DB connection endpoint"
+  value       = module.gitlab_db.db_instance_endpoint
   sensitive   = true
 }
 
-output "db_instance_name" {
-  description = "The database name"
-  value       = module.rds.db_instance_name
+output "gitlab_db_instance_name" {
+  description = "GitLab DB name"
+  value       = module.gitlab_db.db_instance_name
   sensitive   = true
 }
 
-output "db_instance_username" {
+output "gitlab_db_instance_username" {
   description = "The master username for the database"
-  value       = module.rds.db_instance_username
+  value       = module.gitlab_db.db_instance_username
   sensitive   = true
 }
 
-output "db_instance_master_user_secret_arn" {
+output "gitlab_db_instance_master_user_secret_arn" {
   description = "The ARN of the master user secret"
-  value       = module.rds.db_instance_master_user_secret_arn
+  value       = module.gitlab_db.db_instance_master_user_secret_arn
+  sensitive   = true
+}
+
+output "idam_db_instance_endpoint" {
+  description = "IDAM DB connection endpoint"
+  value       = module.idam_db.db_instance_endpoint
+  sensitive   = true
+}
+
+output "idam_db_instance_name" {
+  description = "IDAM DB name"
+  value       = module.idam_db.db_instance_name
+  sensitive   = true
+}
+
+output "idam_db_instance_username" {
+  description = "The master username for the database"
+  value       = module.idam_db.db_instance_username
+  sensitive   = true
+}
+
+output "idam_db_instance_master_user_secret_arn" {
+  description = "The ARN of the master user secret"
+  value       = module.idam_db.db_instance_master_user_secret_arn
+  sensitive   = true
+}
+
+output "sonarqube_db_instance_endpoint" {
+  description = "SonarQube DB connection endpoint"
+  value       = module.sonarqube_db.db_instance_endpoint
+  sensitive   = true
+}
+
+output "sonarqube_db_instance_name" {
+  description = "SonarQube DB name"
+  value       = module.sonarqube_db.db_instance_name
+  sensitive   = true
+}
+
+output "sonarqube_db_instance_username" {
+  description = "The master username for the database"
+  value       = module.sonarqube_db.db_instance_username
+  sensitive   = true
+}
+
+output "sonarqube_db_instance_master_user_secret_arn" {
+  description = "The ARN of the master user secret"
+  value       = module.sonarqube_db.db_instance_master_user_secret_arn
   sensitive   = true
 }
