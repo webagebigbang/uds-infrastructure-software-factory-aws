@@ -105,7 +105,7 @@ module "idam_db" {
 
   identifier = "keycloak-db"
 
-  db_name  = var.sonarqube_db_name
+  db_name  = var.idam_db_name
   username = "kcadmin"
 
   subnet_group_name = local.db_subnet_group_name
