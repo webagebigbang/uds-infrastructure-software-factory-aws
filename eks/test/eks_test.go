@@ -27,7 +27,7 @@ func TestEksModule(t *testing.T) {
 	}
 
 	vpcId := os.Getenv("VPC_ID")
-	iamRolePermissionsBoundary := os.Getenv("IAM_ROLE_PERMISSION_BOUNDARY")
+	iamRolePermissionsBoundary := os.Getenv("IAM_ROLE_PERMISSIONS_BOUNDARY")
 	clusterSubnets := os.Getenv("CLUSTER_SUBNETS")
 	cidrBlocks := os.Getenv("CIDR_BLOCKS")
 	clusterCniSubnets := os.Getenv("CLUSTER_CNI_SUBNETS")
