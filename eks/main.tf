@@ -28,7 +28,7 @@ locals {
 
 # EKS
 module "cluster" {
-  source = "github.com/defenseunicorns/terraform-aws-uds-eks?ref=v0.0.5"
+  source = "github.com/defenseunicorns/terraform-aws-uds-eks?ref=add-ebs-role-boundary" #v0.0.5"
 
   name                            = var.cluster_name
   vpc_id                          = local.vpc_id
@@ -75,10 +75,6 @@ module "cluster" {
 					}
 				}
 			JSON
-    }
-
-    aws-ebs-csi-driver = {
-      irsa_iam_permissions_boundary = var.iam_role_permissions_boundary
     }
   }
 }
