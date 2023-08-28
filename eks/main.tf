@@ -28,9 +28,7 @@ locals {
 
 # EKS
 module "cluster" {
-  # TODO: move to a release tag when this commit is released
-  # https://github.com/defenseunicorns/terraform-aws-uds-eks/commit/21ce79533cbeaa15b2d74242192159e1fa92a59d
-  source = "github.com/defenseunicorns/terraform-aws-uds-eks?ref=main"
+  source = "github.com/defenseunicorns/terraform-aws-uds-eks?ref=v0.0.6"
 
   name                            = var.cluster_name
   vpc_id                          = local.vpc_id
