@@ -28,7 +28,9 @@ locals {
 
 # EKS
 module "cluster" {
-  source = "github.com/defenseunicorns/terraform-aws-uds-eks?ref=add-ebs-role-boundary" #v0.0.5"
+  # TODO: move to a release tag when this commit is released
+  # https://github.com/defenseunicorns/terraform-aws-uds-eks/commit/21ce79533cbeaa15b2d74242192159e1fa92a59d
+  source = "github.com/defenseunicorns/terraform-aws-uds-eks?ref=main"
 
   name                            = var.cluster_name
   vpc_id                          = local.vpc_id
