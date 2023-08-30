@@ -141,5 +141,5 @@ variable "elasticache_subnet_group_name" {
 variable "eks_cluster_sg_id" {
   description = "ID of the EKS cluster's security group.  Used to allow access to ElastiCache (Redis)."
   type        = string
-  default     = ""
+  default     = null
 }

@@ -150,12 +150,25 @@ resource "aws_security_group" "redis_sg" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "redis_ingress" {
+  count = var.eks_cluster_sg_id == null ? 0 : 1
+
   security_group_id = aws_security_group.redis_sg.id
 
   referenced_security_group_id = var.eks_cluster_sg_id
   from_port                    = 0
   ip_protocol                  = "tcp"
   to_port                      = 6379
+}
+
+resource "aws_vpc_security_group_ingress_rule" "test_redis_ingress" {
+  count = var.eks_cluster_sg_id == null ? 1 : 0
+
+  security_group_id = aws_security_group.redis_sg.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 0
+  ip_protocol = "tcp"
+  to_port     = 6379
 }
 
 ## These are used for testing Elasticache and RDS locally only.  CI will provide subnets.
