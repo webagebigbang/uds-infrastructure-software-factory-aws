@@ -128,24 +128,15 @@ module "sonarqube_db" {
 
 # Redis Resources
 
-resource "aws_elasticache_replication_group" "redis_cluster_mode" {
-  replication_group_id = var.elasticache_cluster_name
-  description          = "Redis Replication Group for GitLab"
-
-  subnet_group_name = local.elasticache_subnet_group_name
-
-  node_type            = "cache.r6g.large"
+resource "aws_elasticache_cluster" "redis" {
+  cluster_id = var.elasticache_cluster_name
+  engine = "redis"
+  node_type = "cache.r6g.large"
+  num_cache_nodes = 1
+  parameter_group_name = "default.redis7"
   engine_version       = "7.0"
-  parameter_group_name = "default.redis7.cluster.on"
-  auth_token           = var.elasticache_password
-
-  num_cache_clusters = 2
-
-  automatic_failover_enabled = true
-  multi_az_enabled           = true
-
-  at_rest_encryption_enabled = true
-  transit_encryption_enabled = true
+  port = 6379
+  subnet_group_name = local.elasticache_subnet_group_name
 }
 
 ## These are used for testing Elasticache and RDS locally only.  CI will provide subnets.
