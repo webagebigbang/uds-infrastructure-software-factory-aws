@@ -59,6 +59,7 @@ jobs:
         with:
           test_retry: 1
           test_dir: ./gitlab/test
+          test_timeout: 60m
         env:
           BACKEND_BUCKET: ${{ vars.BACKEND_BUCKET }}
           BACKEND_KEY: ${{ vars.BACKEND_KEY }}vpc.tfstate
