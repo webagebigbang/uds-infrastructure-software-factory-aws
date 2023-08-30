@@ -129,14 +129,33 @@ module "sonarqube_db" {
 # Redis Resources
 
 resource "aws_elasticache_cluster" "redis" {
-  cluster_id = var.elasticache_cluster_name
-  engine = "redis"
-  node_type = "cache.r6g.large"
-  num_cache_nodes = 1
+  cluster_id           = var.elasticache_cluster_name
+  engine               = "redis"
+  node_type            = "cache.r6g.large"
+  num_cache_nodes      = 1
   parameter_group_name = "default.redis7"
   engine_version       = "7.0"
-  port = 6379
-  subnet_group_name = local.elasticache_subnet_group_name
+  port                 = 6379
+  subnet_group_name    = local.elasticache_subnet_group_name
+}
+
+resource "aws_security_group" "redis_sg" {
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "redis_ingress" {
+  security_group_id = aws_security_group.redis_sg.id
+
+  referenced_security_group_id = var.eks_cluster_sg_id
+  from_port                    = 0
+  ip_protocol                  = "tcp"
+  to_port                      = 6379
 }
 
 ## These are used for testing Elasticache and RDS locally only.  CI will provide subnets.
