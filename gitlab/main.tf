@@ -128,24 +128,47 @@ module "sonarqube_db" {
 
 # Redis Resources
 
-resource "aws_elasticache_replication_group" "redis_cluster_mode" {
-  replication_group_id = var.elasticache_cluster_name
-  description          = "Redis Replication Group for GitLab"
-
-  subnet_group_name = local.elasticache_subnet_group_name
-
+resource "aws_elasticache_cluster" "redis" {
+  cluster_id           = var.elasticache_cluster_name
+  engine               = "redis"
   node_type            = "cache.r6g.large"
+  num_cache_nodes      = 1
+  parameter_group_name = "default.redis7"
   engine_version       = "7.0"
-  parameter_group_name = "default.redis7.cluster.on"
-  auth_token           = var.elasticache_password
+  port                 = 6379
+  subnet_group_name    = local.elasticache_subnet_group_name
+}
 
-  num_cache_clusters = 2
+resource "aws_security_group" "redis_sg" {
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
 
-  automatic_failover_enabled = true
-  multi_az_enabled           = true
+resource "aws_vpc_security_group_ingress_rule" "redis_ingress" {
+  count = var.eks_cluster_sg_id == null ? 0 : 1
 
-  at_rest_encryption_enabled = true
-  transit_encryption_enabled = true
+  security_group_id = aws_security_group.redis_sg.id
+
+  referenced_security_group_id = var.eks_cluster_sg_id
+  from_port                    = 0
+  ip_protocol                  = "tcp"
+  to_port                      = 6379
+}
+
+resource "aws_vpc_security_group_ingress_rule" "test_redis_ingress" {
+  count = var.eks_cluster_sg_id == null ? 1 : 0
+
+  security_group_id = aws_security_group.redis_sg.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 0
+  ip_protocol = "tcp"
+  to_port     = 6379
 }
 
 ## These are used for testing Elasticache and RDS locally only.  CI will provide subnets.

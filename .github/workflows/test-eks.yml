@@ -52,7 +52,7 @@ jobs:
           aws-region: us-west-2
           # 21600 seconds == 6 hours
           # 1800 seconds == 30 minutes
-          role-duration-seconds: 1800
+          role-duration-seconds: 3600
       # terraform fmt, tf validate, tflint, chekov
       - name: Run Common Terraform Tests
         uses: defenseunicorns/uds-common-workflows/.github/actions/terraform-test@main
