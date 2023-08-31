@@ -128,15 +128,27 @@ module "sonarqube_db" {
 
 # Redis Resources
 
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id           = var.elasticache_cluster_name
-  engine               = "redis"
+resource "aws_elasticache_replication_group" "redis" {
+  replication_group_id = var.elasticache_cluster_name
+  description          = "Redis Replication Group for GitLab"
+
+  subnet_group_name = local.elasticache_subnet_group_name
+
   node_type            = "cache.r6g.large"
-  num_cache_nodes      = 1
-  parameter_group_name = "default.redis7"
   engine_version       = "7.0"
+  parameter_group_name = "default.redis7"
+  auth_token           = var.elasticache_password
   port                 = 6379
-  subnet_group_name    = local.elasticache_subnet_group_name
+
+  num_cache_clusters = 2
+
+  automatic_failover_enabled = true
+  multi_az_enabled           = true
+
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+
+  security_group_ids = [aws_security_group.redis_sg.id]
 }
 
 resource "aws_security_group" "redis_sg" {
@@ -166,7 +178,6 @@ resource "aws_vpc_security_group_ingress_rule" "test_redis_ingress" {
   security_group_id = aws_security_group.redis_sg.id
 
   cidr_ipv4   = "0.0.0.0/0"
-  from_port   = 0
   ip_protocol = "tcp"
   to_port     = 6379
 }
