@@ -14,6 +14,10 @@ output "redis_arn" {
   value = aws_elasticache_cluster.redis.arn
 }
 
+output "redis_cache_nodes" {
+  value = aws_elasticache_cluster.redis.cache_nodes
+}
+
 # RDS
 
 output "gitlab_db_instance_endpoint" {
