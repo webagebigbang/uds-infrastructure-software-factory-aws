@@ -52,7 +52,7 @@ func TestGitLabModule(t *testing.T) {
 			"gitlab_db_subnet_group_name":    dbSubnetGroup,
 			"idam_db_subnet_group_name":      dbSubnetGroup,
 			"sonarqube_db_subnet_group_name": dbSubnetGroup,
-			"vpc_id":                         os.getEnv("VPC_ID"),
+			"vpc_id":                         os.Getenv("VPC_ID"),
 		},
 
 		BackendConfig: map[string]interface{}{
