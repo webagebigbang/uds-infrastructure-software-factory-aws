@@ -7,6 +7,7 @@ data "aws_availability_zones" "available" {
 locals {
   db_subnet_group_name          = var.create_testing_resources ? module.db_subnet_group[0].db_subnet_group_id : var.gitlab_db_subnet_group_name
   elasticache_subnet_group_name = var.create_testing_resources ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
+  vpc_id                        = var.create_testing_resources ? aws_vpc.test_vpc.id : var.vpc_id
 }
 
 # Object Storage Resources
@@ -152,6 +153,8 @@ resource "aws_elasticache_replication_group" "redis" {
 }
 
 resource "aws_security_group" "redis_sg" {
+  vpc_id = local.vpc_id
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -167,8 +170,8 @@ resource "aws_vpc_security_group_ingress_rule" "redis_ingress" {
   security_group_id = aws_security_group.redis_sg.id
 
   referenced_security_group_id = var.eks_cluster_sg_id
-  from_port                    = 0
   ip_protocol                  = "tcp"
+  from_port                    = 0
   to_port                      = 6379
 }
 
@@ -179,6 +182,7 @@ resource "aws_vpc_security_group_ingress_rule" "test_redis_ingress" {
 
   cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = "tcp"
+  from_port   = 0
   to_port     = 6379
 }
 

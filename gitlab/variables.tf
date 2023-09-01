@@ -121,25 +121,31 @@ variable "sonarqube_db_password" {
 # Elasticache Variables
 
 variable "elasticache_cluster_name" {
-  description = "Elasticache Cluster Name"
+  description = "ElastiCache Cluster Name"
   type        = string
   default     = "uds-gitlab-cluster"
 }
 
 variable "elasticache_password" {
-  description = "Password for Elasticache auth."
+  description = "Password for ElastiCache auth."
   type        = string
   sensitive   = true
 }
 
 variable "elasticache_subnet_group_name" {
-  description = "Subnet group name to use for Elasticache"
+  description = "Subnet group name to use for ElastiCache"
   type        = string
   default     = ""
 }
 
 variable "eks_cluster_sg_id" {
   description = "ID of the EKS cluster's security group.  Used to allow access to ElastiCache (Redis)."
+  type        = string
+  default     = null
+}
+
+variable "vpc_id" {
+  description = "VPC ID used for ElastiCache Security Group"
   type        = string
   default     = null
 }
