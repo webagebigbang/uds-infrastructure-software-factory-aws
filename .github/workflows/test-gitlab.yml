@@ -69,3 +69,4 @@ jobs:
           ELASTICACHE_SUBNET_GROUP: ${{ vars.ELASTICACHE_SUBNET_GROUP }}
           FLOW_LOG_PERMISSION_BOUNDARY: ${{ vars.FLOW_LOG_PERMISSION_BOUNDARY }}
           REGION: ${{ vars.REGION }}
+          VPC_ID: ${{ vars.VPC_ID }}

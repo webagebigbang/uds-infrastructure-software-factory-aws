@@ -9,13 +9,18 @@ output "s3_bucket_id" {
   value = values(module.s3_bucket).*.s3_bucket_id
 }
 
-# Elasticache
+# Elasticache Redis
+
 output "redis_arn" {
-  value = aws_elasticache_cluster.redis.arn
+  value = aws_elasticache_replication_group.redis.arn
 }
 
-output "redis_cache_nodes" {
-  value = aws_elasticache_cluster.redis.cache_nodes
+output "redis_configuration_id" {
+  value = aws_elasticache_replication_group.redis.id
+}
+
+output "elasticache_configuration_endpoint" {
+  value = aws_elasticache_replication_group.redis.configuration_endpoint_address
 }
 
 # RDS

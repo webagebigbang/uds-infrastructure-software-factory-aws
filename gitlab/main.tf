@@ -7,6 +7,7 @@ data "aws_availability_zones" "available" {
 locals {
   db_subnet_group_name          = var.create_testing_resources ? module.db_subnet_group[0].db_subnet_group_id : var.gitlab_db_subnet_group_name
   elasticache_subnet_group_name = var.create_testing_resources ? aws_elasticache_subnet_group.test_cache_subnet[0].name : var.elasticache_subnet_group_name
+  vpc_id                        = var.create_testing_resources ? aws_vpc.test_vpc[0].id : var.vpc_id
 }
 
 # Object Storage Resources
@@ -128,18 +129,32 @@ module "sonarqube_db" {
 
 # Redis Resources
 
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id           = var.elasticache_cluster_name
-  engine               = "redis"
+resource "aws_elasticache_replication_group" "redis" {
+  replication_group_id = var.elasticache_cluster_name
+  description          = "Redis Replication Group for GitLab"
+
+  subnet_group_name = local.elasticache_subnet_group_name
+
   node_type            = "cache.r6g.large"
-  num_cache_nodes      = 1
-  parameter_group_name = "default.redis7"
   engine_version       = "7.0"
+  parameter_group_name = "default.redis7"
+  auth_token           = var.elasticache_password
   port                 = 6379
-  subnet_group_name    = local.elasticache_subnet_group_name
+
+  num_cache_clusters = 2
+
+  automatic_failover_enabled = true
+  multi_az_enabled           = true
+
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+
+  security_group_ids = [aws_security_group.redis_sg.id]
 }
 
 resource "aws_security_group" "redis_sg" {
+  vpc_id = local.vpc_id
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -155,8 +170,8 @@ resource "aws_vpc_security_group_ingress_rule" "redis_ingress" {
   security_group_id = aws_security_group.redis_sg.id
 
   referenced_security_group_id = var.eks_cluster_sg_id
-  from_port                    = 0
   ip_protocol                  = "tcp"
+  from_port                    = 0
   to_port                      = 6379
 }
 
@@ -166,8 +181,8 @@ resource "aws_vpc_security_group_ingress_rule" "test_redis_ingress" {
   security_group_id = aws_security_group.redis_sg.id
 
   cidr_ipv4   = "0.0.0.0/0"
-  from_port   = 0
   ip_protocol = "tcp"
+  from_port   = 0
   to_port     = 6379
 }
 
