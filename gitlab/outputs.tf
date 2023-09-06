@@ -19,10 +19,6 @@ output "redis_id" {
   value = aws_elasticache_replication_group.redis.id
 }
 
-output "elasticache_configuration_endpoint" {
-  value = element(split(":", aws_elasticache_replication_group.redis.configuration_endpoint_address), 0)
-}
-
 output "elasticache_primary_endpoint" {
   value = element(split(":", aws_elasticache_replication_group.redis.primary_endpoint_address), 0)
 }
